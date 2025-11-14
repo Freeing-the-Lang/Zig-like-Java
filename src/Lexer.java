@@ -1,6 +1,6 @@
 public class Lexer {
     private final String src;
-    private int pos = 0;
+    int pos = 0;  // Parser가 필요하면 public으로 바꿀 수 있음
 
     public Lexer(String src) {
         this.src = src;
@@ -17,15 +17,24 @@ public class Lexer {
     public Token nextToken() {
         char c = peek();
 
+        // whitespace skip
         while (Character.isWhitespace(c)) {
             next();
             c = peek();
         }
 
-        if (c == '\0') return Token.EOF;
-        if (Character.isDigit(c)) return scanNumber();
-        if (Character.isAlphabetic(c)) return scanIdent();
+        if (c == '\0')
+            return Token.EOF;
 
+        // number
+        if (Character.isDigit(c))
+            return Token.NUMBER;
+
+        // ident (추가할 때 확장하도록 유지)
+        if (Character.isAlphabetic(c))
+            return Token.IDENT;
+
+        // punctuation
         switch (next()) {
             case '{': return Token.LBRACE;
             case '}': return Token.RBRACE;
@@ -39,13 +48,15 @@ public class Lexer {
         }
     }
 
-    private Token scanNumber() {
-        while (Character.isDigit(peek())) next();
-        return Token.NUMBER;
-    }
+    // Parser에서 실제 숫자 값 읽을 때 사용하는 함수
+    public int readNumber() {
+        int start = pos;
 
-    private Token scanIdent() {
-        while (Character.isAlphabetic(peek())) next();
-        return Token.IDENT;
+        // 첫 nextToken() 단계에서 숫자로 확정 됨 → 실제 숫자 consume
+        while (pos < src.length() && Character.isDigit(src.charAt(pos))) {
+            pos++;
+        }
+
+        return Integer.parseInt(src.substring(start, pos));
     }
 }
