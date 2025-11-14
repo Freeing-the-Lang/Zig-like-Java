@@ -1,6 +1,6 @@
 public class Lexer {
     private final String src;
-    int pos = 0;  // Parser가 필요하면 public으로 바꿀 수 있음
+    int pos = 0;  // position index
 
     public Lexer(String src) {
         this.src = src;
@@ -17,7 +17,7 @@ public class Lexer {
     public Token nextToken() {
         char c = peek();
 
-        // whitespace skip
+        // skip whitespace
         while (Character.isWhitespace(c)) {
             next();
             c = peek();
@@ -30,7 +30,7 @@ public class Lexer {
         if (Character.isDigit(c))
             return Token.NUMBER;
 
-        // ident (추가할 때 확장하도록 유지)
+        // identifier (basic)
         if (Character.isAlphabetic(c))
             return Token.IDENT;
 
@@ -44,15 +44,14 @@ public class Lexer {
             case '+': return Token.PLUS;
             case '-': return Token.MINUS;
             default:
-                throw new RuntimeException("Unknown char: " + c);
+                throw new RuntimeException("Unknown character: " + c);
         }
     }
 
-    // Parser에서 실제 숫자 값 읽을 때 사용하는 함수
+    // read full integer literal after seeing NUMBER token
     public int readNumber() {
         int start = pos;
 
-        // 첫 nextToken() 단계에서 숫자로 확정 됨 → 실제 숫자 consume
         while (pos < src.length() && Character.isDigit(src.charAt(pos))) {
             pos++;
         }
