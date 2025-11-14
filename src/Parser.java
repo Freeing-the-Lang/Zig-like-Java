@@ -13,21 +13,20 @@ public class Parser {
         current = lexer.nextToken();
     }
 
-    public Node parseExpr() {
-        Node node = parseTerm();
+    public Expr parseExpr() {
+        Expr node = parseTerm();
         while (current == Token.PLUS || current == Token.MINUS) {
             Token op = current;
             eat(op);
-            node = new BinaryNode(node, op, parseTerm());
+            node = new BinaryExpr(node, op, parseTerm());
         }
         return node;
     }
 
-    private Node parseTerm() {
+    private Expr parseTerm() {
         if (current == Token.NUMBER) {
-            int v = Integer.parseInt(lexer.src.substring(lexer.pos - 1, lexer.pos));
-            eat(Token.NUMBER);
-            return new NumberNode(v);
+            int v = lexer.readNumber();     // ★ 여기 중요
+            return new IntLiteral(v);
         }
         throw new RuntimeException("Invalid term");
     }
