@@ -4,7 +4,7 @@ public class Main {
 
         Lexer lx = new Lexer(code);
         Parser ps = new Parser(lx);
-        Node ast = ps.parseExpr();
+        Expr ast = ps.parseExpr();   // ✔ 고침
 
         System.out.println("AST OK: " + ast.getClass().getSimpleName());
     }
