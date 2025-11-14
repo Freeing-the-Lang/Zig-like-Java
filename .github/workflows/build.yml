@@ -1,0 +1,27 @@
+name: Zig-like-Java 3OS Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build
+        run: javac src/*.java
+
+      - name: Run
+        run: java -cp src Main
